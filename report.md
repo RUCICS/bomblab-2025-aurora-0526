@@ -11,7 +11,7 @@
 
 scoreboard 截图：
 
-![alt text](image-11.png)
+![alt text](images/image-11.png)
 
 <!-- TODO: 用一个scoreboard的截图，本地图片，放到 imgs 文件夹下，不要用这个 github，pandoc 解析可能有问题 -->
 
@@ -30,7 +30,7 @@ Zuorhi viyantas was festsu ruor proi, yuk dalfe suoivo swenne yat vu henvi nes.
 题目思路：
 - 输入一个字符串(input)
 - 查看rsi寄存器中存储的地址处的字符串为：Zuorhi viyantas was festsu ruor proi, yuk dalfe suoivo swenne yat vu henvi nes.
-![alt text](image.png)
+![alt text](images/image.png)
 - call <strings_not_equal>:比较输入的字符串与rsi寄存器存储的地址处的字符串是否相等，返回值存在eax寄存器中
 - %eax & %eax:
   - 如果ZF为0，即%eax=1，strings_not_equal返回值为真，两个字符串不相等，就会跳到phase_1+0x19=144e处，为explode_bomb，导致炸弹爆炸；
@@ -64,7 +64,7 @@ Zuorhi viyantas was festsu ruor proi, yuk dalfe suoivo swenne yat vu henvi nes.
   - 如果ZF=1，即%eax=4，则继续进行->所以输入要为四个整数
 - 接下来为一个2 × 3的矩阵与一个3 × 2的矩阵的乘法运算：
   - 每一行与一列的相乘中，%eax作为计数器，%ecx作为累加器，储存结果；
-  ![alt text](image-1.png)
+  ![alt text](images/image-1.png)
   - 假设%rdi中存储的是整数数组B的首地址，%rsi中存储的是整数数组A的首地址：
     - %r11d作为整体的计数器
     - %eax=0->%ecx=%ecx+b0×a0,%eax++;(注意%rdi和%rsi的值都不变，仍然指向首地址)
@@ -138,8 +138,8 @@ Zuorhi viyantas was festsu ruor proi, yuk dalfe suoivo swenne yat vu henvi nes.
   1579:	e8 a8 09 00 00       	call   1f26 <explode_bomb>
 ```
 - 跳转后比较a与7的大小，如果a>7，则跳转到phase_3+0xde=0x1622，炸弹爆炸，所以a<=7；
-- 将%rdx赋值为%rip+0x1c9e，查看此地址处的值，得到：![alt text](d324666f7b7e28927ea6b12086a0735e.png)
-- 接下来，将%rdx地址后第a个数赋给rax，然后再与%rdx相加，得到一个新地址，并跳转到这个位置；发现跳转到的每个位置之间间隔七个字节，并且对%eax或者%ebx进行相应赋值后又跳转到一个新位置；有此对应表：![alt text](a16f803f5754255b76d5d4960ae65339.jpg)
+- 将%rdx赋值为%rip+0x1c9e，查看此地址处的值，得到：![alt text](images/image-14.png)
+- 接下来，将%rdx地址后第a个数赋给rax，然后再与%rdx相加，得到一个新地址，并跳转到这个位置；发现跳转到的每个位置之间间隔七个字节，并且对%eax或者%ebx进行相应赋值后又跳转到一个新位置；有此对应表：![alt text](images/image-15.png)
 - 发现15a0，15a5，15aa都会到达explode_bomb,则a不为1，2，3；
 - 15ca行，如果a>5，跳转到phase_3+0x92=15d6，炸弹爆炸，则a<=5；
 - a=4时，%ebx=0，跳转到15b5->经过三次对%eax的加减操作，得到%eax=0；
@@ -233,7 +233,7 @@ func4_2(edi,esi,edx('A'),ecx('C'),r8('B'),r9){
   - 相同，%eax=0，%eax&%eax=0，顺利返回，拆弹成功；
   - 因此输入的字符串要与%rsi存的地址处的字符串相同；
 - 查看%rsi存的地址处的字符串，可知输入的第二个字符串应该为BA；
-![alt text](image-2.png)
+![alt text](images/image-2.png)
 
 ### phase_5
 
@@ -248,7 +248,7 @@ jpofgh
   17d0:	75 58                	jne    182a <phase_5+0x7a>
 ```
 - 查看%rcx存的地址处的字符串：
-![alt text](image-3.png)
+![alt text](images/image-3.png)
 - %edx作为计数器，%rbx->存储的为输入的字符串的地址，17de~17f8为一个循环，伪代码如下：
 ```c
 rdx=0；
@@ -263,7 +263,7 @@ while(rdx!=6){
 - 这个函数的目的是，依次取输入字符串中的每个字符，将其加上0xf再&0xf（将字符的阿斯克码值加上0xf后取后四位），得到的结果记为num，然后将rcx那一串字符中num位置的字符取出来，压入栈中；
 - 循环结束后，将获得的六个数字都存在了栈中，从rsp[1]开始,到rsp[6],并将rsp[7]置为0，作为这六个数字组成的字符串的结尾；
 - 将得到的字符串的首地址赋值给%rdi，再读取一个目标字符串到%rsi，查看%rsi存的地址处的字符串为“flyers”
-![alt text](image-4.png)
+![alt text](images/image-4.png)
 - 调用函数strings_not_equal(rdi,rsi),比较这两个字符串是否相同，如果不相同，%eax为1，跳转到1831，炸弹爆炸，因此要使这两个字符串相等；
 - 逆推：
   - f在rcx存的地址处的那一串字符串(array.0)的下标为9，假设输入的第一个字符为x，则x+0xf的后四位要为9，x的后四位应为0x9-0xf=0xa，查阿斯克码表可知j的阿斯克码十六进制表示为0x4a，后四位为0xa满足条件；
@@ -321,8 +321,8 @@ while(rdx!=6){
 - 这段代码的目的：
   - 将输入的数字都变为7减去原来的数字;
 - 查看%rdx存储的地址处的内容，即node的内容->发现这些节点类似一个链表，node存储的为节点的数据，node+8为指针域，存储的是下一个节点的地址：
-![alt text](image-5.png)
-![alt text](image-6.png)
+![alt text](images/image-5.png)
+![alt text](images/image-6.png)
 - 然后，将这个链表的每个节点的地址按照一定的规则压到栈中，伪代码为：
 ```c
   store=rsp+0x30;//store中每个单元存一个地址（占8个字节）
@@ -417,13 +417,13 @@ while(ebp!=0){
     - 而phase_6的答案中只有5个空格，因此要进入secret_phase就要在phase_6的答案后面再加上一个空格后输入一串数据；
   - 跳转到21d6，将phase_6答案的首地址赋值给rax，再将rdi赋值为rax+rsi（rsi为0xc，即为phase_6的6个字符+6个空格），即rdi为输入进入secret_phase的口令的首地址；
   - 查看rsi存的地址处的字符串，为“enigma”：
-  ![alt text](image-7.png)
+  ![alt text](images/image-7.png)
   - 调用函数strings_not_equal（edi，esi），比较这两个字符串是否相同：
     - 如果输入的字符串不为enigma，eax=1，跳转到21bc，输出两个提示后，return，不能进入到secret_phase；
     - 因此输入的字符要为enigma，eax=0，不跳转，会继续运行到2211，call secret_phase，成功进入到secret_phase;
   - 因此，要进入secret_phase，就要在phase_6的答案之后加上 enigam.
 - secret_phase:是一个国际象棋中马走日的路径问题
-  - 提示：![alt text](image-8.png)
+  - 提示：![alt text](images/image-8.png)
   - 输入：一个字符串，如果长度>0x14，则跳到1c1d，炸弹爆炸，因此输入的字符串长度应该<=0x14;
   - call func7(edi=input,esi=0,edx=0,ecx=0);
     - 棋子的出发位置为（esi，edx）->（0，0），目的位置为（4，7）；
@@ -491,8 +491,8 @@ while(ebp!=0){
       - 因为比较时要把esi当作unsigned处理，因此如果x和y如果有一个为负数（unsigned很大）或者超出7，即不在我们棋盘的范围内，都会导致棋子还没达到目的地就错误返回了；
       - 如果新的位置在棋盘内，则跳转到1b52，继续之后的验证；
     - 查看棋盘（7*8）：
-    ![alt text](image-9.png)
-    ![alt text](image-10.png)
+    ![alt text](images/image-9.png)
+    ![alt text](images/image-10.png)
     - (%rsp+0x40)~(%rsp+0x5c)和(%rsp+0x60)~(%rsp+0x7c)一一对应，用来验证是否会蹩马腿，并和(%rsp)~(%rsp+0x1c)和(%rsp+0x20)~(%rsp+0x3c)的方向一一对应：
       - 因为马走日可以分解成两步：先走一直，再走一斜，蹩马腿的含义为：如果在要去的方向，正前方的第一格，有别的棋子挡住，马就无法走过去，俗称“蹩马腿 ”；
       - 因此，从栈中，我们获得了如下的对应关系：
