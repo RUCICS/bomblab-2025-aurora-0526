@@ -76,18 +76,18 @@ Zuorhi viyantas was festsu ruor proi, yuk dalfe suoivo swenne yat vu henvi nes.
     - 此时%r8d==2，无条件跳转到phase_2+0x54=14a9处，%rdi=%rdi+0xc,%rdi现在指向b3，并重置%rsi，使之重新指向a0，然后执行上述相同的步骤；
     - 之后%r11d==2,结束矩阵乘；
     - 可以看出，这是：
-            $$
-            \begin{bmatrix}
-            b_0 & b_1 & b_2 \\
-            b_3 & b_4 & b_5
-            \end{bmatrix}
-            \times
-            \begin{bmatrix}
-            a_0 & a_1 \\
-            a_2 & a_3 \\
-            a_4 & a_5
-            \end{bmatrix}
-            $$
+      $$
+      \begin{bmatrix}
+      b_0 & b_1 & b_2 \\
+      b_3 & b_4 & b_5
+      \end{bmatrix}
+      \times
+      \begin{bmatrix}
+      a_0 & a_1 \\
+      a_2 & a_3 \\
+      a_4 & a_5
+      \end{bmatrix}
+      $$
   - 将输入的四个数字与矩阵相乘得到的数字一一比较：
     - 如果相等，继续比较；
     - 如果不相等，call explode_bomb；
@@ -470,7 +470,7 @@ while(ebp!=0){
     1aed:	41 83 e2 07          	and    $0x7,%r10d
     1af1:	83 e6 07             	and    $0x7,%esi
     ```
-    - (%rsp)~(%rsp+0x1c)和(%rsp+0x20)~(%rsp+0x3c)两两对应，8种跳法，对应棋子在棋盘上移动的方向和距离->(x,y)
+    - (%rsp)'~'(%rsp+0x1c)和(%rsp+0x20)'~'(%rsp+0x3c)两两对应，8种跳法，对应棋子在棋盘上移动的方向和距离->(x,y)
       - 更新棋子位置并验证位置是否合法（有没有超出棋盘），伪代码：
       ```c
         eax=x;
@@ -493,7 +493,7 @@ while(ebp!=0){
     - 查看棋盘（7*8）：
     ![alt text](images/image-9.png)
     ![alt text](images/image-10.png)
-    - (%rsp+0x40)~(%rsp+0x5c)和(%rsp+0x60)~(%rsp+0x7c)一一对应，用来验证是否会蹩马腿，并和(%rsp)~(%rsp+0x1c)和(%rsp+0x20)~(%rsp+0x3c)的方向一一对应：
+    - (%rsp+0x40)'~'(%rsp+0x5c)和(%rsp+0x60)'~'(%rsp+0x7c)一一对应，用来验证是否会蹩马腿，并和(%rsp)'~'(%rsp+0x1c)和(%rsp+0x20)'~'(%rsp+0x3c)的方向一一对应：
       - 因为马走日可以分解成两步：先走一直，再走一斜，蹩马腿的含义为：如果在要去的方向，正前方的第一格，有别的棋子挡住，马就无法走过去，俗称“蹩马腿 ”；
       - 因此，从栈中，我们获得了如下的对应关系：
       ```c
